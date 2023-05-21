@@ -1,3 +1,8 @@
+/*
+ *
+ * Simple duplicate file finder, it does deep check and does it fast.
+ * Mus syroot@gmail.com
+ */
 #include "file_walker.h"
 #include "file_comparer.h"
 
@@ -25,7 +30,7 @@ int main(int argc, char* argv[]) {
     for (const std::string& directoryPath : directoryPaths) {
         Directory dir(directoryPath);
         dir.walk([&hashToFileMap](const boost::filesystem::path& filePath){
-            auto hash = FileDeepHash::computeSHA256(filePath.string());
+            auto hash = FileDeepHash::compute_evp(filePath.string());
             hashToFileMap[hash].push_back(filePath.string());
         });
     }
@@ -36,7 +41,8 @@ int main(int argc, char* argv[]) {
         if (files.size() > 1) {
             std::cout << "Files with the same hash (" << pair.first << "):" << std::endl;
             for (const std::string& file : files) {
-                std::cout << file << std::endl;
+                auto crs = FileDeepHash::compute_crs(file);
+                std::cout << file << " crs:" << crs << std::endl;
             }
             std::cout << std::endl;
         }

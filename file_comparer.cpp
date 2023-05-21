@@ -1,17 +1,39 @@
+/**
+ * Compute evp and crs32
+ * Mus
+ */
 #include "file_comparer.h"
 #include <fstream>
 #include <sstream>
 #include <iomanip>
 #include <openssl/evp.h>
+#include <boost/crc.hpp>
 #include <iostream>
 
 bool FileDeepHash::areIdentical(
         const std::string & filePath1,
         const std::string  & filePath2) {
-    return computeSHA256(filePath1) == computeSHA256(filePath2);
+    return compute_evp(filePath1) == compute_evp(filePath2);
 }
 
-std::string FileDeepHash::computeSHA256(const std::string& filePath)
+std::uint32_t FileDeepHash::compute_crs(const std::string &filePath) {
+    std::ifstream file(filePath, std::ios::binary);
+    if (!file) {
+        std::cerr << "Cannot open file: " << filePath << std::endl;
+        return 0;
+    }
+
+    boost::crc_32_type crc;
+    char buffer[8192];
+
+    while (file.read(buffer, sizeof(buffer))) {
+        crc.process_bytes(buffer, file.gcount());
+    }
+
+    return crc.checksum();
+}
+
+std::string FileDeepHash::compute_evp(const std::string& filePath)
 {
     std::ifstream file(filePath, std::ifstream::binary);
     if (!file) {
@@ -45,3 +67,4 @@ std::string FileDeepHash::computeSHA256(const std::string& filePath)
     }
     return shaStr.str();
 }
+
