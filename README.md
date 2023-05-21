@@ -8,7 +8,8 @@ If you want build this project, you need install boost and vcpkg first.
 brew install boost
 brew install vcpkg
 cmake -DCMAKE_BUILD_TYPE=Release ..
-mkdir -p build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build .
+mkdir -p build-arm && cd build-arm && cmake -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE="-O2" .. && cmake --build .
+mkdir -p build-intel && cd build-intel && cmake -DCMAKE_OSX_ARCHITECTURES=x86_64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE="-O2" .. && cmake --build .
 ```
 
 or download binary

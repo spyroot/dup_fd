@@ -20,6 +20,9 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
 
 set(CODE_SIGN_IDENTITY "spyroot")
+set(OPENSSL_USE_STATIC_LIBS TRUE)
+set(Boost_USE_STATIC_LIBS ON)
+set(Boost_USE_MULTITHREADED ON)
 
 message(STATUS "BOOST_ROOT: ${BOOST_ROOT}")
 
@@ -27,13 +30,8 @@ if(Boost_FOUND AND OPENSSL_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
     set(SOURCE_FILES main.cpp file_comparer.cpp file_comparer.h)
     add_executable(dup_finder ${SOURCE_FILES})
-    target_link_libraries(dup_finder ${Boost_LIBRARIES} OpenSSL::Crypto)
+    target_link_libraries(dup_finder ${Boost_LIBRARIES} "-flto" OpenSSL::Crypto)
 
-#    target_link_libraries(dup_finder
-#            ${Boost_LIBRARIES}
-#            "-static"
-#            OpenSSL::Crypto
-#            )
 
     message(STATUS "OpenSSL Found: ${OPENSSL_VERSION}")
     message(STATUS "OpenSSL Include: ${OPENSSL_INCLUDE_DIR}")
